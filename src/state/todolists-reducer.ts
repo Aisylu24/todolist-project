@@ -3,6 +3,7 @@ import {TodolistType} from '../api/todolists-api'
 
 export type AddTodolistActionType = ReturnType<typeof addTodolistAC>
 export type RemoveTodolistActionType = ReturnType<typeof removeTodolistAC>
+export type setTodolistActionType = ReturnType<typeof setTodolistAC>
 
 type ActionsType =
     ReturnType<typeof removeTodolistAC>
