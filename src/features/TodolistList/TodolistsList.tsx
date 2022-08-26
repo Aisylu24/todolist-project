@@ -4,13 +4,13 @@ import {AppRootStateType} from "../../state/store";
 import {
     addTodolistAC,
     changeTodolistFilterAC,
-    changeTodolistTitleAC,
+    changeTodolistTitleAC, fetchTodolistsTC,
     FilterValuesType,
-    removeTodolistAC, setTodolistAC,
+    removeTodolistAC,
     TodolistDomainType
 } from "../../state/todolists-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "../../state/tasks-reducer";
-import {TaskStatuses, todolistsAPI} from "../../api/todolists-api";
+import {TaskStatuses} from "../../api/todolists-api";
 import Grid from "@mui/material/Grid";
 import {AddItemForm} from "../../components/AddItemForm";
 import Paper from "@mui/material/Paper";
@@ -20,10 +20,7 @@ import {TasksStateType} from "../../app/App";
 export const TodolistsList: React.FC = () => {
 
     useEffect(()=> {
-        todolistsAPI.getTodolists()
-            .then((res)=> {
-                dispatch(setTodolistAC(res.data))
-            })
+        dispatch(fetchTodolistsTC)
     },[])
 
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
