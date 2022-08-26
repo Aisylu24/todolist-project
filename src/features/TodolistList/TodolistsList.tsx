@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../state/store";
 import {
@@ -6,11 +6,11 @@ import {
     changeTodolistFilterAC,
     changeTodolistTitleAC,
     FilterValuesType,
-    removeTodolistAC,
+    removeTodolistAC, setTodolistAC,
     TodolistDomainType
 } from "../../state/todolists-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "../../state/tasks-reducer";
-import {TaskStatuses} from "../../api/todolists-api";
+import {TaskStatuses, todolistsAPI} from "../../api/todolists-api";
 import Grid from "@mui/material/Grid";
 import {AddItemForm} from "../../components/AddItemForm";
 import Paper from "@mui/material/Paper";
@@ -18,6 +18,14 @@ import {Todolist} from "./Todolist/Todolist";
 import {TasksStateType} from "../../app/App";
 
 export const TodolistsList: React.FC = () => {
+
+    useEffect(()=> {
+        todolistsAPI.getTodolists()
+            .then((res)=> {
+                dispatch(setTodolistAC(res.data))
+            })
+    },[])
+
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
     const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
     const dispatch = useDispatch();
