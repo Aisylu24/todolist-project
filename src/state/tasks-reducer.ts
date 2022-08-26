@@ -1,13 +1,19 @@
 import {TasksStateType} from '../app/App';
 import {v1} from 'uuid';
-import {AddTodolistActionType, RemoveTodolistActionType, setTodolistActionType} from './todolists-reducer';
-import {TaskPriorities, TaskStatuses} from '../api/todolists-api'
+import {
+    AddTodolistActionType,
+    RemoveTodolistActionType,
+    setTodolistActionType
+} from './todolists-reducer';
+import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI} from '../api/todolists-api'
+import {Dispatch} from "redux";
 
 type ActionsType =
     ReturnType<typeof removeTaskAC>
     | ReturnType<typeof addTaskAC>
     | ReturnType<typeof changeTaskStatusAC>
     | ReturnType<typeof changeTaskTitleAC>
+    | ReturnType<typeof setTasksAC>
     | AddTodolistActionType
     | RemoveTodolistActionType
     | setTodolistActionType
@@ -80,6 +86,9 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
             })
             return copyState
         }
+        case "SET-TASKS": {
+            return {...state, [action.todolistId]: action.tasks}
+        }
         default:
             return state;
     }
@@ -96,5 +105,15 @@ export const changeTaskStatusAC = (taskId: string, status: TaskStatuses, todolis
 }
 export const changeTaskTitleAC = (taskId: string, title: string, todolistId: string) => {
     return {type: 'CHANGE-TASK-TITLE', title, todolistId, taskId} as const
+}
+export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) => {
+    return {type: 'SET-TASKS', tasks,todolistId} as const
+}
+
+export const fetchTasksTC = (todolistsId: string) => (dispatch:Dispatch) => {
+    todolistsAPI.getTasks(todolistsId)
+        .then(res => {
+            dispatch(setTasksAC(res.data.items, todolistsId))
+        })
 }
 
