@@ -6,7 +6,7 @@ import {
 } from './todolists-reducer';
 import {TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from '../api/todolists-api'
 import {Dispatch} from "redux";
-import {AppRootStateType} from "./store";
+import {AppRootStateType, AppThunk} from "./store";
 
 export type TasksActionsType =
     ReturnType<typeof removeTaskAC>
@@ -105,7 +105,8 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) => {
 }
 
 
-export const fetchTasksTC = (todolistsId: string) => (dispatch:Dispatch<TasksActionsType>) => {
+export const fetchTasksTC = (todolistsId: string): AppThunk =>
+    (dispatch) => {
     todolistsAPI.getTasks(todolistsId)
         .then(res => {
             dispatch(setTasksAC(res.data.items, todolistsId))
