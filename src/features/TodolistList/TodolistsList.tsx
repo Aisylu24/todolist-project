@@ -2,11 +2,10 @@ import React, {useCallback, useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../state/store";
 import {
-    addTodolistAC,
+    addTodolistThunkCreator,
     changeTodolistFilterAC,
-    changeTodolistTitleAC, fetchTodolistsTC,
+    changeTodolistTitleTC, deleteTodolistThunkCreator, fetchTodolistsTC,
     FilterValuesType,
-    removeTodolistAC,
     TodolistDomainType
 } from "../../state/todolists-reducer";
 import {
@@ -55,17 +54,17 @@ export const TodolistsList: React.FC = () => {
     }, []);
 
     const removeTodolist = useCallback(function (id: string) {
-        const action = removeTodolistAC(id);
+        const action = deleteTodolistThunkCreator(id);
         dispatch(action);
     }, []);
 
     const changeTodolistTitle = useCallback(function (id: string, title: string) {
-        const action = changeTodolistTitleAC(id, title);
+        const action = changeTodolistTitleTC(id, title);
         dispatch(action);
     }, []);
 
     const addTodolist = useCallback((title: string) => {
-        const action = addTodolistAC(title);
+        const action = addTodolistThunkCreator(title);
         dispatch(action);
     }, [dispatch]);
     return <>
