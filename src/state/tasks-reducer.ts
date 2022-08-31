@@ -6,7 +6,8 @@ import {
 } from './todolists-reducer';
 import {TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from '../api/todolists-api'
 import {Dispatch} from "redux";
-import {AppRootStateType, AppThunk} from "./store";
+import {ActionsType, AppRootStateType, AppThunk} from "./store";
+import {setAppStatusAC} from "../app/app-reducer";
 
 export type TasksActionsType =
     ReturnType<typeof removeTaskAC>
@@ -73,7 +74,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Tasks
             delete copyState[action.id];
             return copyState;
         }
-        case 'SET-TODOLISTS':{
+        case 'SET-TODOLISTS': {
             const copyState = {...state}
             action.todos.forEach(tl => {
                 copyState[tl.id] = []
@@ -101,48 +102,54 @@ export const changeTaskTitleAC = (taskId: string, title: string, todolistId: str
     return {type: 'CHANGE-TASK-TITLE', title, todolistId, taskId} as const
 }
 export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) => {
-    return {type: 'SET-TASKS', tasks,todolistId} as const
+    return {type: 'SET-TASKS', tasks, todolistId} as const
 }
 
 
-export const fetchTasksTC = (todolistsId: string): AppThunk =>
-    (dispatch) => {
+export const fetchTasksTC = (todolistsId: string): AppThunk => dispatch => {
+    dispatch(setAppStatusAC('loading'))
     todolistsAPI.getTasks(todolistsId)
         .then(res => {
             dispatch(setTasksAC(res.data.items, todolistsId))
+            dispatch(setAppStatusAC('succeeded'))
         })
 }
 
-export const removeTaskTC = (todolistsId: string, taskId: string) => (dispatch:Dispatch<TasksActionsType>) => {
-    todolistsAPI.deleteTask(todolistsId,taskId)
-        .then(()=> {
-            dispatch(removeTaskAC(todolistsId,taskId))
+export const removeTaskTC = (todolistsId: string, taskId: string) => (dispatch: Dispatch<ActionsType>) => {
+    dispatch(setAppStatusAC('loading'))
+    todolistsAPI.deleteTask(todolistsId, taskId)
+        .then(() => {
+            dispatch(removeTaskAC(todolistsId, taskId))
+            dispatch(setAppStatusAC('succeeded'))
         })
 }
 
-export const addTaskTC = (todolistsId: string, title: string) => (dispatch:Dispatch<TasksActionsType>) => {
+export const addTaskTC = (todolistsId: string, title: string) => (dispatch: Dispatch<ActionsType>) => {
+    dispatch(setAppStatusAC('loading'))
     todolistsAPI.createTask(todolistsId, title)
-        .then((res)=> {
+        .then((res) => {
             dispatch(addTaskAC(res.data.data.item))
+            dispatch(setAppStatusAC('succeeded'))
         })
 }
 
 
-
-export const  updateTaskStatusTC = (todolistsId: string, taskId: string, status: TaskStatuses) => (dispatch:Dispatch<TasksActionsType>, getState: ()=> AppRootStateType) => {
-
-const task = getState().tasks[todolistsId].find((t)=> t.id === taskId)
+export const updateTaskStatusTC = (todolistsId: string, taskId: string, status: TaskStatuses) =>
+    (dispatch: Dispatch<ActionsType>, getState: () => AppRootStateType) => {
+        dispatch(setAppStatusAC('loading'))
+        const task = getState().tasks[todolistsId].find((t) => t.id === taskId)
 // if (task) {} or task!
-const model: UpdateTaskModelType = {
-    title: task!.title,
-    description: task!.description,
-    status: status,
-    priority: task!.priority,
-    startDate: task!.startDate,
-    deadline: task!.deadline,
-}
-    todolistsAPI.updateTask(todolistsId,taskId, model)
-        .then((res)=> {
-            dispatch(changeTaskStatusAC(taskId, status, todolistsId))
-        })
-}
+        const model: UpdateTaskModelType = {
+            title: task!.title,
+            description: task!.description,
+            status: status,
+            priority: task!.priority,
+            startDate: task!.startDate,
+            deadline: task!.deadline,
+        }
+        todolistsAPI.updateTask(todolistsId, taskId, model)
+            .then((res) => {
+                dispatch(changeTaskStatusAC(taskId, status, todolistsId))
+                dispatch(setAppStatusAC('succeeded'))
+            })
+    }
