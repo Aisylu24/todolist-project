@@ -3,7 +3,6 @@ import {todolistsReducer, TodosActionsType} from './todolists-reducer';
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import thunk, {ThunkAction, ThunkDispatch} from 'redux-thunk'
 import {AppActionsType, appReducer} from "../app/app-reducer";
-import {TypedUseSelectorHook, useSelector} from "react-redux";
 
 
 const rootReducer = combineReducers({
@@ -13,9 +12,6 @@ const rootReducer = combineReducers({
 })
 
 export const store = createStore(rootReducer, applyMiddleware(thunk));
-
-//hooks
-export const  useAppSelector: TypedUseSelectorHook<AppRootStateType> = useSelector
 
 //types
 export type ActionsType = TodosActionsType | TasksActionsType | AppActionsType

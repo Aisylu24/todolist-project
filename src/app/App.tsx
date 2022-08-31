@@ -10,7 +10,8 @@ import {Menu} from '@mui/icons-material';
 import {TaskType} from '../api/todolists-api'
 import {TodolistsList} from "../features/TodolistList/TodolistsList";
 import {LinearProgress} from "@mui/material";
-import { useAppSelector} from "../state/store";
+import {ErrorSnackbar} from "../components/ErrorSnackBar";
+import {useAppSelector} from "./hooks";
 
 
 export type TasksStateType = {
@@ -25,6 +26,7 @@ function App() {
 
     return (
         <div className="App">
+            <ErrorSnackbar/>
             <AppBar position="static">
                 <Toolbar>
                     <IconButton edge="start" color="inherit" aria-label="menu">
