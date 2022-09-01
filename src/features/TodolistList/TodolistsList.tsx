@@ -1,12 +1,9 @@
 import React, {useCallback, useEffect} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {AppRootStateType} from "../../state/store";
 import {
     addTodolistThunkCreator,
     changeTodolistFilterAC,
     changeTodolistTitleTC, deleteTodolistThunkCreator, fetchTodolistsTC,
     FilterValuesType,
-    TodolistDomainType
 } from "../../state/todolists-reducer";
 import {
     addTaskTC,
@@ -19,18 +16,18 @@ import Grid from "@mui/material/Grid";
 import {AddItemForm} from "../../components/AddItemForm";
 import Paper from "@mui/material/Paper";
 import {Todolist} from "./Todolist/Todolist";
-import {TasksStateType} from "../../app/App";
-import {useAppDispatch} from "../../app/hooks";
+import {useAppDispatch, useAppSelector} from "../../app/hooks";
 
 export const TodolistsList: React.FC = () => {
+debugger
+    const todolists = useAppSelector(state => state.todolists)
+    const tasks = useAppSelector(state => state.tasks)
+    const dispatch = useAppDispatch();
 
     useEffect(()=> {
+        debugger
         dispatch(fetchTodolistsTC)
     },[])
-
-    const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
-    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
-    const dispatch = useAppDispatch();
 
     const removeTask = useCallback(function (id: string, todolistId: string) {
         dispatch(removeTaskTC(id, todolistId));

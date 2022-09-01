@@ -9,19 +9,17 @@ import Container from '@mui/material/Container';
 import {Menu} from '@mui/icons-material';
 import {TaskType} from '../api/todolists-api'
 import {TodolistsList} from "../features/TodolistList/TodolistsList";
-import {LinearProgress} from "@mui/material";
-import {ErrorSnackbar} from "../components/ErrorSnackBar";
 import {useAppSelector} from "./hooks";
+import {LinearProgress} from "@mui/material";
+import {ErrorSnackbar} from "../components/ErrorSnackbar";
 
 
 export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
 
-
 function App() {
 
-    // const status = useSelector<AppRootStateType, RequestStatusType>(state => state.app.status)
     const status = useAppSelector(state => state.app.status)
 
     return (
