@@ -147,13 +147,13 @@ export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispa
             }
         })
         .catch((error) => {
-            dispatch(setAppStatusAC('failed'))
             dispatch(setAppErrorAC(error.messages))
+            dispatch(setAppStatusAC('failed'))
         })
 }
 
 
-enum ResultCode {
+export enum ResultCode {
     success= 0,
     error =1,
     captcha = 10

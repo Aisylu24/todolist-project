@@ -2,6 +2,8 @@ import {todolistsAPI, TodolistType} from '../api/todolists-api'
 import {Dispatch} from "redux";
 import {AppActionsType, AppThunk} from "./store";
 import {RequestStatusType, setAppErrorAC, setAppStatusAC} from "../app/app-reducer";
+import {ResultCode} from "./tasks-reducer";
+import {handleAppError, handleNetworkError} from "../utils/error-utils";
 
 
 export type AddTodolistActionType = ReturnType<typeof addTodolistAC>
@@ -114,12 +116,16 @@ export const addTodolistThunkCreator = (title: string) => {
          dispatch(setAppStatusAC('loading'))
         todolistsAPI.createTodolist(title)
             .then((res) => {
-                dispatch(addTodolistAC(res.data.data.item))
-                dispatch(setAppStatusAC('succeeded'))
+                if (res.data.resultCode === ResultCode.success) {
+                    dispatch(addTodolistAC(res.data.data.item))
+                    dispatch(setAppStatusAC('succeeded'))
+                }
+                else {
+                    handleAppError(dispatch, res.data)
+                }
             })
             .catch((error) => {
-                dispatch(setAppStatusAC('failed'))
-                dispatch(setAppErrorAC(error.messages))
+                handleNetworkError(dispatch,error)
             })
     }
 }
