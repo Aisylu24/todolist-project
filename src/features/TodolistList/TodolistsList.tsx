@@ -19,14 +19,13 @@ import {Todolist} from "./Todolist/Todolist";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 
 export const TodolistsList: React.FC = () => {
-debugger
+
     const todolists = useAppSelector(state => state.todolists)
     const tasks = useAppSelector(state => state.tasks)
     const dispatch = useAppDispatch();
 
     useEffect(()=> {
-        debugger
-        dispatch(fetchTodolistsTC)
+        dispatch(fetchTodolistsTC())
     },[])
 
     const removeTask = useCallback(function (id: string, todolistId: string) {
@@ -88,6 +87,7 @@ debugger
                                 removeTodolist={removeTodolist}
                                 changeTaskTitle={changeTaskTitle}
                                 changeTodolistTitle={changeTodolistTitle}
+                                entityStatus={tl.entityStatus}
                             />
                         </Paper>
                     </Grid>
