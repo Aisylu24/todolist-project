@@ -8,6 +8,7 @@ import {TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from '../api/
 import {Dispatch} from "redux";
 import {AppActionsType, AppRootStateType, AppThunk} from "./store";
 import {setAppErrorAC, setAppStatusAC} from "../app/app-reducer";
+import {AxiosError} from "axios";
 
 export type TasksActionsType =
     ReturnType<typeof removeTaskAC>
@@ -113,6 +114,10 @@ export const fetchTasksTC = (todolistsId: string): AppThunk => dispatch => {
             dispatch(setTasksAC(res.data.items, todolistsId))
             dispatch(setAppStatusAC('succeeded'))
         })
+        .catch((error) => {
+            dispatch(setAppStatusAC('failed'))
+            dispatch(setAppErrorAC(error.messages))
+        })
 }
 
 export const removeTaskTC = (todolistsId: string, taskId: string) => (dispatch: Dispatch<AppActionsType>) => {
@@ -121,6 +126,10 @@ export const removeTaskTC = (todolistsId: string, taskId: string) => (dispatch: 
         .then(() => {
             dispatch(removeTaskAC(todolistsId, taskId))
             dispatch(setAppStatusAC('succeeded'))
+        })
+        .catch((error) => {
+            dispatch(setAppStatusAC('failed'))
+            dispatch(setAppErrorAC(error.messages))
         })
 }
 
@@ -133,9 +142,13 @@ export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispa
                 dispatch(addTaskAC(res.data.data.item))
                 dispatch(setAppStatusAC('succeeded'))
             } else {
-                dispatch(setAppErrorAC(res.data.messages.length? res.data.messages[0] : 'Some error occurred'))
+                dispatch(setAppErrorAC(res.data.messages.length ? res.data.messages[0] : 'Some error occurred'))
                 dispatch(setAppStatusAC('failed'))
             }
+        })
+        .catch((error) => {
+            dispatch(setAppStatusAC('failed'))
+            dispatch(setAppErrorAC(error.messages))
         })
 }
 
@@ -155,7 +168,19 @@ export const updateTaskStatusTC = (todolistsId: string, taskId: string, status: 
         }
         todolistsAPI.updateTask(todolistsId, taskId, model)
             .then((res) => {
-                dispatch(changeTaskStatusAC(taskId, status, todolistsId))
-                dispatch(setAppStatusAC('succeeded'))
+                if (res.data.resultCode === 0) {
+                    dispatch(changeTaskStatusAC(taskId, status, todolistsId))
+                    dispatch(setAppStatusAC('succeeded'))
+                } else {
+                    dispatch(setAppErrorAC('Some error'))
+                }
+                dispatch(setAppStatusAC('failed'))
+            })
+            .catch( (error: AxiosError)=> {
+            dispatch(setAppErrorAC(error.message))
+            dispatch(setAppStatusAC('failed'))
+        })
+            .finally(()=> {
+
             })
     }

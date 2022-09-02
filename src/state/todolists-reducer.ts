@@ -1,7 +1,7 @@
 import {todolistsAPI, TodolistType} from '../api/todolists-api'
 import {Dispatch} from "redux";
 import {AppActionsType, AppThunk} from "./store";
-import {RequestStatusType, setAppStatusAC} from "../app/app-reducer";
+import {RequestStatusType, setAppErrorAC, setAppStatusAC} from "../app/app-reducer";
 
 
 export type AddTodolistActionType = ReturnType<typeof addTodolistAC>
@@ -89,6 +89,10 @@ export const fetchTodolistsTC = (): AppThunk => dispatch => {
                 dispatch(setTodolistsAC(res.data))
                 dispatch(setAppStatusAC('succeeded'))
             })
+            .catch((error) => {
+                dispatch(setAppStatusAC('failed'))
+                dispatch(setAppErrorAC(error.messages))
+            })
     }
 
 export const deleteTodolistThunkCreator = (id: string) => (dispatch: Dispatch<AppActionsType>) => {  // Dispatch<TodosActionsType>
@@ -98,6 +102,10 @@ export const deleteTodolistThunkCreator = (id: string) => (dispatch: Dispatch<Ap
         .then((res) => {
             dispatch(removeTodolistAC(id))
             dispatch(setAppStatusAC('succeeded'))
+        })
+        .catch((error) => {
+            dispatch(setAppStatusAC('failed'))
+            dispatch(setAppErrorAC(error.messages))
         })
 }
 
@@ -109,6 +117,10 @@ export const addTodolistThunkCreator = (title: string) => {
                 dispatch(addTodolistAC(res.data.data.item))
                 dispatch(setAppStatusAC('succeeded'))
             })
+            .catch((error) => {
+                dispatch(setAppStatusAC('failed'))
+                dispatch(setAppErrorAC(error.messages))
+            })
     }
 }
 
@@ -119,6 +131,10 @@ export const changeTodolistTitleTC = (id: string, title: string) => {
             .then((res) => {
                 dispatch(changeTodolistTitleAC(id, title))
                 dispatch(setAppStatusAC('succeeded'))
+            })
+            .catch((error) => {
+                dispatch(setAppStatusAC('failed'))
+                dispatch(setAppErrorAC(error.messages))
             })
     }
 }
