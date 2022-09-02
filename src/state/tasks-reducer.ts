@@ -138,7 +138,7 @@ export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispa
     dispatch(changeTodolistEntityStatusAC(todolistId, 'loading'))
     todolistsAPI.createTask(todolistId, title)
         .then((res) => {
-            if (res.data.resultCode === 0) {
+            if (res.data.resultCode === ResultCode.success) {
                 dispatch(addTaskAC(res.data.data.item))
                 dispatch(setAppStatusAC('succeeded'))
             } else {
@@ -152,6 +152,12 @@ export const addTaskTC = (todolistId: string, title: string) => (dispatch: Dispa
         })
 }
 
+
+enum ResultCode {
+    success= 0,
+    error =1,
+    captcha = 10
+}
 
 export const updateTaskStatusTC = (todolistsId: string, taskId: string, status: TaskStatuses) =>
     (dispatch: Dispatch<AppActionsType>, getState: () => AppRootStateType) => {
@@ -168,7 +174,7 @@ export const updateTaskStatusTC = (todolistsId: string, taskId: string, status: 
         }
         todolistsAPI.updateTask(todolistsId, taskId, model)
             .then((res) => {
-                if (res.data.resultCode === 0) {
+                if (res.data.resultCode === ResultCode.success) {
                     dispatch(changeTaskStatusAC(taskId, status, todolistsId))
                 } else {
                     dispatch(setAppErrorAC('Some error'))
