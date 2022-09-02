@@ -170,17 +170,14 @@ export const updateTaskStatusTC = (todolistsId: string, taskId: string, status: 
             .then((res) => {
                 if (res.data.resultCode === 0) {
                     dispatch(changeTaskStatusAC(taskId, status, todolistsId))
-                    dispatch(setAppStatusAC('succeeded'))
                 } else {
                     dispatch(setAppErrorAC('Some error'))
                 }
-                dispatch(setAppStatusAC('failed'))
             })
             .catch( (error: AxiosError)=> {
             dispatch(setAppErrorAC(error.message))
-            dispatch(setAppStatusAC('failed'))
         })
             .finally(()=> {
-
+                dispatch(setAppStatusAC('idle'))
             })
     }
