@@ -12,6 +12,8 @@ import {TodolistsList} from "../features/TodolistList/TodolistsList";
 import {useAppSelector} from "./hooks";
 import {LinearProgress} from "@mui/material";
 import {ErrorSnackbar} from "../components/ErrorSnackbar";
+import {Login} from "../features/Login/Login";
+import {Route, Routes} from 'react-router-dom';
 
 
 export type TasksStateType = {
@@ -38,7 +40,10 @@ function App() {
                 {status === 'loading' && <LinearProgress/>}
             </AppBar>
             <Container fixed>
-                <TodolistsList/>
+                <Routes>
+                <Route path={'/'} element={<TodolistsList/>}/>
+                <Route path={'login'} element={<Login/>}/>
+                </Routes>
             </Container>
         </div>
     );
