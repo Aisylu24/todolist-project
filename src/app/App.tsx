@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useCallback, useEffect} from 'react'
 import './App.css';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,11 +9,13 @@ import Container from '@mui/material/Container';
 import {Menu} from '@mui/icons-material';
 import {TaskType} from '../api/todolists-api'
 import {TodolistsList} from "../features/TodolistList/TodolistsList";
-import {useAppSelector} from "./hooks";
-import {LinearProgress} from "@mui/material";
+import {useAppDispatch, useAppSelector} from "./hooks";
+import {CircularProgress, LinearProgress} from "@mui/material";
 import {ErrorSnackbar} from "../components/ErrorSnackbar";
 import {Login} from "../features/Login/Login";
 import {Route, Routes} from 'react-router-dom';
+import {initializeAppTC} from "./app-reducer";
+import {logoutTC} from "../features/Login/login-reducer";
 
 
 export type TasksStateType = {
@@ -21,8 +23,23 @@ export type TasksStateType = {
 }
 
 function App() {
-
+    console.log('app')
     const status = useAppSelector(state => state.app.status)
+    const isInitialized = useAppSelector(state => state.app.initialized)
+    const isLoggedIn = useAppSelector(state => state.login.isLoggedIn)
+    const dispatch = useAppDispatch()
+
+    const logoutHandler = useCallback(()=>{
+        dispatch(logoutTC())
+    },[])
+
+    useEffect(()=>{
+        dispatch(initializeAppTC())
+    },[])
+
+    if(!isInitialized) {
+        return <CircularProgress/>
+    }
 
     return (
         <div className="App">
@@ -35,14 +52,14 @@ function App() {
                     <Typography variant="h6">
                         News
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    {isLoggedIn && <Button onClick={logoutHandler} color="inherit">Log out</Button>}
                 </Toolbar>
                 {status === 'loading' && <LinearProgress/>}
             </AppBar>
             <Container fixed>
                 <Routes>
-                <Route path={'/'} element={<TodolistsList/>}/>
-                <Route path={'login'} element={<Login/>}/>
+                    <Route path={'/'} element={<TodolistsList/>}/>
+                    <Route path={'login'} element={<Login/>}/>
                 </Routes>
             </Container>
         </div>

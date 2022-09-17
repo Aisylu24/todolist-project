@@ -2,8 +2,8 @@ import {todolistsAPI, TodolistType} from '../api/todolists-api'
 import {Dispatch} from "redux";
 import {AppActionsType, AppThunk} from "./store";
 import {RequestStatusType, setAppErrorAC, setAppStatusAC} from "../app/app-reducer";
-import {ResultCode} from "./tasks-reducer";
-import {handleAppError, handleNetworkError} from "../utils/error-utils";
+import {fetchTasksTC, ResultCode} from "./tasks-reducer";
+import {handleServerAppError, handleNetworkError} from "../utils/error-utils";
 
 
 export type AddTodolistActionType = ReturnType<typeof addTodolistAC>
@@ -84,44 +84,49 @@ export const changeTodolistEntityStatusAC  = (id: string, status: RequestStatusT
 //    }
 // }
 
-export const fetchTodolistsTC = (): AppThunk => dispatch => {
-        dispatch(setAppStatusAC('loading'))
+export const fetchTodolistsTC = () => (dispatch:any) => {
+        dispatch(setAppStatusAC({status: 'loading'}))
         todolistsAPI.getTodolists()
             .then((res) => {
                 dispatch(setTodolistsAC(res.data))
-                dispatch(setAppStatusAC('succeeded'))
+                dispatch(setAppStatusAC({status: 'succeeded'}))
+                return res.data
+            }).then((todos)=> {
+            todos.forEach((tl) => {
+                dispatch(fetchTasksTC(tl.id))
             })
+        })
             .catch((error) => {
-                dispatch(setAppStatusAC('failed'))
+                dispatch(setAppStatusAC({status: 'failed'}))
                 dispatch(setAppErrorAC(error.messages))
             })
     }
 
-export const deleteTodolistThunkCreator = (id: string) => (dispatch: Dispatch<AppActionsType>) => {  // Dispatch<TodosActionsType>
-    dispatch(setAppStatusAC('loading'))
+export const deleteTodolistThunkCreator = (id: string) => (dispatch: Dispatch) => {  // Dispatch<TodosActionsType>
+    dispatch(setAppStatusAC({status: 'loading'}))
     dispatch(changeTodolistEntityStatusAC(id,'loading'))
     todolistsAPI.deleteTodolist(id)
         .then((res) => {
             dispatch(removeTodolistAC(id))
-            dispatch(setAppStatusAC('succeeded'))
+            dispatch(setAppStatusAC({status: 'succeeded'}))
         })
         .catch((error) => {
-            dispatch(setAppStatusAC('failed'))
+            dispatch(setAppStatusAC({status: 'failed'}))
             dispatch(setAppErrorAC(error.messages))
         })
 }
 
 export const addTodolistThunkCreator = (title: string) => {
-    return (dispatch: Dispatch<AppActionsType>) => {
-         dispatch(setAppStatusAC('loading'))
+    return (dispatch: Dispatch) => {
+         dispatch(setAppStatusAC({status: 'loading'}))
         todolistsAPI.createTodolist(title)
             .then((res) => {
                 if (res.data.resultCode === ResultCode.success) {
                     dispatch(addTodolistAC(res.data.data.item))
-                    dispatch(setAppStatusAC('succeeded'))
+                    dispatch(setAppStatusAC({status: 'succeeded'}))
                 }
                 else {
-                    handleAppError(dispatch, res.data)
+                    handleServerAppError(dispatch, res.data)
                 }
             })
             .catch((error) => {
@@ -131,16 +136,16 @@ export const addTodolistThunkCreator = (title: string) => {
 }
 
 export const changeTodolistTitleTC = (id: string, title: string) => {
-    return (dispatch: Dispatch<AppActionsType>) => {
-         dispatch(setAppStatusAC('loading'))
+    return (dispatch: Dispatch) => {
+         dispatch(setAppStatusAC({status: 'loading'}))
         todolistsAPI.updateTodolist(id, title)
             .then((res) => {
                 dispatch(changeTodolistTitleAC(id, title))
-                dispatch(setAppStatusAC('succeeded'))
+                dispatch(setAppStatusAC({status:'succeeded'}))
             })
             .catch((error) => {
-                dispatch(setAppStatusAC('failed'))
-                dispatch(setAppErrorAC(error.messages))
+                dispatch(setAppStatusAC({status: 'failed'}))
+                dispatch(setAppErrorAC({error: error.messages}))
             })
     }
 }
