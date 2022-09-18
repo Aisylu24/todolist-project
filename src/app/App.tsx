@@ -9,13 +9,14 @@ import Container from '@mui/material/Container';
 import {Menu} from '@mui/icons-material';
 import {TaskType} from '../api/todolists-api'
 import {TodolistsList} from "../features/TodolistList/TodolistsList";
-import {useAppDispatch, useAppSelector} from "./hooks";
+import {useAppSelector} from "./hooks";
 import {CircularProgress, LinearProgress} from "@mui/material";
 import {ErrorSnackbar} from "../components/ErrorSnackbar";
 import {Login} from "../features/Login/Login";
 import {Route, Routes} from 'react-router-dom';
 import {initializeAppTC} from "./app-reducer";
 import {logoutTC} from "../features/Login/login-reducer";
+import {useDispatch} from "react-redux";
 
 
 export type TasksStateType = {
@@ -27,7 +28,7 @@ function App() {
     const status = useAppSelector(state => state.app.status)
     const isInitialized = useAppSelector(state => state.app.initialized)
     const isLoggedIn = useAppSelector(state => state.login.isLoggedIn)
-    const dispatch = useAppDispatch()
+    const dispatch = useDispatch()
 
     const logoutHandler = useCallback(()=>{
         dispatch(logoutTC())

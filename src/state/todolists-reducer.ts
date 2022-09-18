@@ -59,19 +59,6 @@ export const {
     changeTodolistEntityStatusAC
 } = slice.actions
 
-// export const fetchTodolistsTC = (): AppThunk => async dispatch => {
-//     debugger
-//     try {
-//         dispatch(setAppStatusAC('loading'))
-//         debugger
-//        const res = await todolistsAPI.getTodolists()
-//        dispatch(setTodolistsAC(res.data))
-//        dispatch(setAppStatusAC('succeeded'))
-//    } catch (error) {
-//        throw error
-//    }
-// }
-
 export const fetchTodolistsTC = () => (dispatch: any) => {
     dispatch(setAppStatusAC({status: 'loading'}))
     todolistsAPI.getTodolists()
