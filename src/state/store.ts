@@ -1,7 +1,7 @@
 import {tasksReducer} from './tasks-reducer';
 import {todolistsReducer} from './todolists-reducer';
-import {combineReducers} from 'redux';
-import thunk, {ThunkAction} from 'redux-thunk'
+import {Action, combineReducers} from 'redux';
+import thunk, {ThunkAction, ThunkDispatch} from 'redux-thunk'
 import {LoginActionsType, loginReducer} from "../features/Login/login-reducer";
 import {configureStore} from "@reduxjs/toolkit";
 import {appReducer} from "../app/app-reducer";
@@ -22,7 +22,7 @@ export const store = configureStore({
 //types
 export type AppActionsType = LoginActionsType
 export type AppRootStateType = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type AppDispatch = ThunkDispatch<AppRootStateType, any, Action>
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppRootStateType, unknown, AppActionsType>
 
 
