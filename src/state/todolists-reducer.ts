@@ -84,10 +84,12 @@ export const deleteTodolistThunkCreator = (id: string) => (dispatch: Dispatch) =
         .then((res) => {
             dispatch(removeTodolistAC({id}))
             dispatch(setAppStatusAC({status: 'succeeded'}))
+            dispatch(changeTodolistEntityStatusAC({id, status:'succeeded'}))
         })
         .catch((error) => {
             dispatch(setAppStatusAC({status: 'failed'}))
             dispatch(setAppErrorAC(error.messages))
+            dispatch(changeTodolistEntityStatusAC({id, status:'failed'}))
         })
 }
 

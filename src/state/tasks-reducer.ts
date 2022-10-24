@@ -43,14 +43,17 @@ export const addTaskTC = (title: string, todolistId: string) => (dispatch: Dispa
             if (res.data.resultCode === ResultCode.success) {
                 dispatch(addTaskAC({task: res.data.data.item}))
                 dispatch(setAppStatusAC({status: 'succeeded'}))
+                dispatch(changeTodolistEntityStatusAC({id: todolistId, status: 'succeeded'}))
             } else {
                 dispatch(setAppErrorAC({error: res.data.messages.length ? res.data.messages[0] : 'Some error occurred'}))
                 dispatch(setAppStatusAC({status: 'failed'}))
+                dispatch(changeTodolistEntityStatusAC({id: todolistId, status: 'failed'}))
             }
         })
         .catch((error) => {
             dispatch(setAppErrorAC(error.messages))
             dispatch(setAppStatusAC({status: 'failed'}))
+            dispatch(changeTodolistEntityStatusAC({id: todolistId, status: 'failed'}))
         })
 }
 
