@@ -54,7 +54,7 @@ const error = res.payload?.fieldsErrors[0]
     })
 
     if(isLoggedIn) {
-        return <Navigate to={'/todolist-project'}/>
+        return <Navigate to={'/'}/>
     }
 
     return <Grid container justifyContent={'center'}>

@@ -59,7 +59,7 @@ function App() {
             </AppBar>
             <Container fixed>
                 <Routes>
-                    <Route path={'/todolist-project'} element={<TodolistsList/>}/>
+                    <Route path={'/'} element={<TodolistsList/>}/>
                     <Route path={'login'} element={<Login/>}/>
                 </Routes>
             </Container>
